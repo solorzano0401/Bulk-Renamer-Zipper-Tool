@@ -34,7 +34,7 @@ export const generateFilenamesFromImage = async (file: File, count: number = 10)
   try {
     if (!API_KEY) {
       console.warn("API Key is missing. Skipping AI generation.");
-      return ["API_KEY_MISSING_CHECK_ENV"];
+      return ["FALTA_API_KEY_REVISA_ENV"];
     }
 
     const imagePart = await fileToGenerativePart(file);
@@ -45,10 +45,11 @@ export const generateFilenamesFromImage = async (file: File, count: number = 10)
         parts: [
           imagePart,
           {
-            text: `Analyze this image and generate a list of ${count} distinct, descriptive, and SEO-friendly filenames that would be suitable for this image. 
-            Return ONLY the list of names (without file extensions).
-            The names should use hyphens or underscores instead of spaces.
-            Do not include numbering or bullet points.`
+            text: `Analiza esta imagen y genera una lista de ${count} nombres de archivo distintos, descriptivos y optimizados para SEO.
+            Devuelve SOLO la lista de nombres (sin extensiones de archivo).
+            Los nombres deben estar en ESPAÑOL.
+            Usa guiones o guiones bajos en lugar de espacios.
+            No incluyas numeración ni viñetas.`
           }
         ]
       },

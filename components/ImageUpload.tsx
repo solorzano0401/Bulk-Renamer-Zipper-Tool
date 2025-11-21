@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Upload, Image as ImageIcon, X } from 'lucide-react';
+import React, { useCallback, useState, useEffect } from 'react';
+import { Upload, X, Loader2 } from 'lucide-react';
 import { FileData } from '../types';
 
 interface ImageUploadProps {
@@ -9,14 +9,30 @@ interface ImageUploadProps {
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({ fileData, onFileSelect, onClear }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  // Reset processing state when fileData updates (image loaded)
+  useEffect(() => {
+    if (fileData) {
+      setIsProcessing(false);
+    }
+  }, [fileData]);
+
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
+      setIsDragOver(false);
+
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
         if (file.type.startsWith('image/')) {
-          onFileSelect(file);
+          setIsProcessing(true);
+          // Defer call slightly to allow UI to render loader
+          requestAnimationFrame(() => {
+             onFileSelect(file);
+          });
         }
       }
     },
@@ -26,33 +42,38 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ fileData, onFileSelect
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isDragOver) setIsDragOver(true);
+  };
+  
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      setIsProcessing(true);
       onFileSelect(e.target.files[0]);
     }
   };
 
   if (fileData) {
     return (
-      <div className="relative w-full h-64 bg-slate-100 rounded-xl border-2 border-slate-200 overflow-hidden group shadow-sm">
+      <div className="relative w-full h-[500px] bg-neutral-50 dark:bg-neutral-900 rounded-none border border-neutral-200 dark:border-neutral-800 overflow-hidden group">
         <img
           src={fileData.previewUrl}
           alt="Preview"
-          className="w-full h-full object-contain p-4"
+          className="w-full h-full object-contain p-6 opacity-90"
         />
-        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+        <div className="absolute inset-0 bg-white/80 dark:bg-black/80 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
           <button
             onClick={onClear}
-            className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-4 py-2 rounded-full flex items-center gap-2 hover:bg-white/20 transition-colors"
+            className="bg-black dark:bg-white text-white dark:text-black px-6 py-2 rounded-full flex items-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors text-sm font-medium"
           >
-            <X size={18} />
-            Remove Image
+            <X size={16} />
+            Eliminar imagen
           </button>
-        </div>
-        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur text-slate-600 text-xs px-2 py-1 rounded-md font-medium shadow-sm">
-          {fileData.file.type.split('/')[1].toUpperCase()}
         </div>
       </div>
     );
@@ -62,23 +83,40 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ fileData, onFileSelect
     <div
       onDrop={handleDrop}
       onDragOver={handleDragOver}
-      className="w-full h-64 bg-white rounded-xl border-2 border-dashed border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 transition-all cursor-pointer flex flex-col items-center justify-center group shadow-sm"
+      onDragLeave={handleDragLeave}
+      className={`
+        w-full h-[500px] rounded-none border border-dashed transition-all cursor-pointer flex flex-col items-center justify-center group
+        ${isDragOver 
+          ? 'border-black dark:border-white bg-neutral-50 dark:bg-neutral-800' 
+          : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+        }
+      `}
     >
-      <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
-        <div className="p-4 bg-slate-100 rounded-full group-hover:bg-indigo-100 transition-colors mb-3">
-          <Upload className="w-8 h-8 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+      {isProcessing ? (
+        <div className="flex flex-col items-center animate-in fade-in zoom-in duration-300">
+           <Loader2 className="w-8 h-8 text-neutral-400 dark:text-neutral-500 animate-spin mb-3" />
+           <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Procesando imagen...</p>
         </div>
-        <p className="text-sm font-medium text-slate-700 group-hover:text-indigo-700">
-          Click to upload or drag and drop
-        </p>
-        <p className="text-xs text-slate-500 mt-1">SVG, PNG, JPG or GIF</p>
-        <input
-          type="file"
-          className="hidden"
-          accept="image/*"
-          onChange={handleInputChange}
-        />
-      </label>
+      ) : (
+        <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+          <div className={`p-4 rounded-full mb-2 transition-transform duration-300 ${isDragOver ? 'scale-110' : 'group-hover:scale-110'}`}>
+            <Upload 
+               className={`w-8 h-8 transition-colors ${isDragOver ? 'text-black dark:text-white' : 'text-neutral-300 dark:text-neutral-600 group-hover:text-black dark:group-hover:text-white'}`} 
+               strokeWidth={1.5} 
+            />
+          </div>
+          <p className={`text-sm font-medium mb-1 transition-colors ${isDragOver ? 'text-black dark:text-white' : 'text-neutral-900 dark:text-neutral-300'}`}>
+             {isDragOver ? 'Suelta la imagen aquí' : 'Sube tu imagen'}
+          </p>
+          <p className="text-xs text-neutral-400 dark:text-neutral-600">Arrastra o haz clic para explorar</p>
+          <input
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={handleInputChange}
+          />
+        </label>
+      )}
     </div>
   );
 };

@@ -5,13 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bulk Renamer & Zipper</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+            },
+            colors: {
+              neutral: {
+                850: '#1f1f1f',
+                950: '#0a0a0a',
+              }
+            }
+          }
+        }
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
+      }
+      /* Custom Scrollbar for dark mode aesthetic */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #e5e5e5; 
+        border-radius: 4px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #404040; 
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #d4d4d4; 
+      }
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: #525252; 
       }
     </style>
   <script type="importmap">
@@ -22,13 +61,13 @@
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "file-saver": "https://aistudiocdn.com/file-saver@^2.0.5",
-    "jszip": "https://aistudiocdn.com/jszip@^3.10.1"
+    "jszip": "https://aistudiocdn.com/jszip@^3.10.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs"
   }
 }
 </script>
 </head>
-  <body>
+  <body class="bg-neutral-50 dark:bg-neutral-950 transition-colors duration-300">
     <div id="root"></div>
   </body>
 </html>

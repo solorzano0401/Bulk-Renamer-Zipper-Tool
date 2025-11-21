@@ -1,17 +1,17 @@
 import JSZip from 'jszip';
-import FileSaver from 'file-saver';
 
 export const generateAndDownloadZip = async (
   file: File,
   names: string[],
-  originalExtension: string
+  originalExtension: string,
+  onProgress?: (percent: number) => void
 ): Promise<void> => {
   const zip = new JSZip();
-  const folderName = file.name.split('.')[0] + '_variations';
+  const folderName = file.name.split('.')[0] + '_variaciones';
   const folder = zip.folder(folderName);
 
   if (!folder) {
-    throw new Error("Failed to create zip folder");
+    throw new Error("No se pudo crear la carpeta ZIP");
   }
 
   // Deduplicate names to prevent overwriting in the zip
@@ -40,9 +40,26 @@ export const generateAndDownloadZip = async (
     folder.file(fileName, file);
   });
 
-  const content = await zip.generateAsync({ type: 'blob' });
+  const content = await zip.generateAsync(
+    { 
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 5 }
+    },
+    (metadata) => {
+      if (onProgress) {
+        onProgress(metadata.percent);
+      }
+    }
+  );
   
-  // Handle variations in file-saver export (default function vs object)
-  const saveAs = (FileSaver as any).saveAs || FileSaver;
-  saveAs(content, `${folderName}.zip`);
+  // Native download method - no external dependency needed
+  const url = URL.createObjectURL(content);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${folderName}.zip`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };

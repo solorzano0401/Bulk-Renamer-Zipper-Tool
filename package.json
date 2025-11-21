@@ -1,5 +1,5 @@
 {
-  "name": "bulk-renamer-&-zipper",
+  "name": "renombrador-masivo-img",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,8 +13,8 @@
     "@google/genai": "^1.30.0",
     "lucide-react": "^0.554.0",
     "react-dom": "^19.2.0",
-    "file-saver": "^2.0.5",
-    "jszip": "^3.10.1"
+    "jszip": "^3.10.1",
+    "xlsx": "latest"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

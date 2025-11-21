@@ -1,26 +1,59 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { FileData, AppState } from './types';
 import { ImageUpload } from './components/ImageUpload';
 import { NamesInput } from './components/NamesInput';
 import { generateFilenamesFromImage } from './services/geminiService';
 import { generateAndDownloadZip } from './utils/zipUtils';
-import { Download, FileArchive, Info } from 'lucide-react';
+import { Download, Check, Moon, Sun, Loader2, FileType } from 'lucide-react';
 
 const App: React.FC = () => {
   const [fileData, setFileData] = useState<FileData | null>(null);
   const [namesInput, setNamesInput] = useState<string>('');
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [darkMode, setDarkMode] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [targetExtension, setTargetExtension] = useState<string>('jpg');
+
+  // Initialize Dark Mode from Local Storage or System Preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+      setDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   const handleFileSelect = useCallback((file: File) => {
     const reader = new FileReader();
+    const ext = file.name.split('.').pop() || 'jpg';
     reader.onload = (e) => {
       setFileData({
         file,
         previewUrl: e.target?.result as string,
-        extension: file.name.split('.').pop() || 'jpg',
+        extension: ext,
       });
+      setTargetExtension(ext); // Set default extension based on uploaded file
       setErrorMessage(null);
+      setSuccessMessage(null);
     };
     reader.readAsDataURL(file);
   }, []);
@@ -29,6 +62,8 @@ const App: React.FC = () => {
     setFileData(null);
     setNamesInput('');
     setErrorMessage(null);
+    setSuccessMessage(null);
+    setTargetExtension('jpg');
   }, []);
 
   const handleAutoGenerate = async () => {
@@ -36,6 +71,7 @@ const App: React.FC = () => {
     
     setAppState(AppState.GENERATING_NAMES);
     setErrorMessage(null);
+    setSuccessMessage(null);
     try {
       const suggestions = await generateFilenamesFromImage(fileData.file);
       if (suggestions.length > 0) {
@@ -45,7 +81,7 @@ const App: React.FC = () => {
         });
       }
     } catch (error) {
-      setErrorMessage("Failed to generate names. Please check your API key or try again.");
+      setErrorMessage("Error al generar nombres. Verifica tu API key.");
     } finally {
       setAppState(AppState.IDLE);
     }
@@ -55,7 +91,9 @@ const App: React.FC = () => {
     if (!fileData || !namesInput.trim()) return;
 
     setAppState(AppState.PROCESSING_ZIP);
+    setProgress(0);
     setErrorMessage(null);
+    setSuccessMessage(null);
     try {
       const namesList = namesInput
         .split('\n')
@@ -63,17 +101,25 @@ const App: React.FC = () => {
         .filter(n => n.length > 0);
       
       if (namesList.length === 0) {
-          setErrorMessage("Please enter at least one valid filename.");
+          setErrorMessage("Por favor ingresa al menos un nombre válido.");
           setAppState(AppState.IDLE);
           return;
       }
 
-      await generateAndDownloadZip(fileData.file, namesList, fileData.extension);
+      await generateAndDownloadZip(
+        fileData.file, 
+        namesList, 
+        targetExtension, // Use the user-selected extension
+        (percent) => setProgress(Math.round(percent))
+      );
+      setSuccessMessage("¡Descarga completada con éxito!");
+      setTimeout(() => setSuccessMessage(null), 5000);
     } catch (error) {
       console.error(error);
-      setErrorMessage("An error occurred while creating the ZIP file.");
+      setErrorMessage("Ocurrió un error al crear el archivo ZIP.");
     } finally {
       setAppState(AppState.IDLE);
+      setProgress(0);
     }
   };
 
@@ -81,124 +127,175 @@ const App: React.FC = () => {
   const canDownload = fileData !== null && fileCount > 0 && appState === AppState.IDLE;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Navbar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col font-sans text-neutral-900 dark:text-neutral-100 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300">
+      
+      {/* Header */}
+      <header className="w-full px-6 py-6 border-b border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-950/50 backdrop-blur-sm sticky top-0 z-30">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-indigo-600 p-2 rounded-lg">
-              <FileArchive className="w-5 h-5 text-white" />
-            </div>
-            <h1 className="text-xl font-bold text-slate-800 tracking-tight">
-              Zip<span className="text-indigo-600">Genie</span>
+            <h1 className="text-lg font-bold tracking-tight">
+              Renombrador<span className="text-neutral-400 dark:text-neutral-600">Zip</span>
             </h1>
+            <div className="hidden sm:block h-4 w-[1px] bg-neutral-300 dark:bg-neutral-700 mx-2"></div>
+            <div className="hidden sm:block text-xs text-neutral-500 dark:text-neutral-500 uppercase tracking-wider font-medium">
+              Herramienta de Archivos
+            </div>
           </div>
-          <div className="hidden sm:flex items-center gap-4 text-sm text-slate-500">
-            <span className="flex items-center gap-1">
-              <Info size={14} />
-              Client-side processing only
-            </span>
-          </div>
+
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-full text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-200 dark:focus:ring-neutral-800"
+            aria-label="Toggle Dark Mode"
+          >
+            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <main className="flex-grow w-full max-w-[1400px] mx-auto px-6 py-8">
         
         {errorMessage && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center gap-3 text-sm animate-fade-in">
-             <Info size={18} className="shrink-0" />
+          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm border-l-2 border-red-500 rounded-r-sm">
              {errorMessage}
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 h-full">
+        {successMessage && (
+          <div className="mb-8 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm border-l-2 border-emerald-500 flex items-center gap-2 animate-in fade-in slide-in-from-top-2 rounded-r-sm">
+             <Check size={18} />
+             {successMessage}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
           {/* Left Column: Upload */}
-          <div className="md:col-span-5 flex flex-col gap-4">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4">1. Source Image</h2>
-              <ImageUpload 
-                fileData={fileData} 
-                onFileSelect={handleFileSelect} 
-                onClear={handleClearFile} 
-              />
-              <p className="text-xs text-slate-400 mt-3 leading-relaxed">
-                Upload the image you want to replicate. We will create copies of this file inside the generated ZIP archive.
-              </p>
-            </div>
-            
-            {/* Desktop Helper for AI */}
-            <div className="hidden md:block bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
-                <h3 className="font-semibold mb-2 relative z-10">Need Ideas?</h3>
-                <p className="text-indigo-100 text-sm relative z-10 mb-4">
-                   Use our AI Magic to automatically analyze your image and suggest SEO-friendly filenames instantly.
-                </p>
-                <button 
-                    onClick={handleAutoGenerate}
-                    disabled={!fileData || appState !== AppState.IDLE}
-                    className="relative z-10 bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Try AI Suggestions
-                </button>
+          <div className="lg:col-span-4 h-full">
+            <div className="flex flex-col h-full">
+              <div className="flex items-center h-[34px] mb-4">
+                <div className="w-5 h-5 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center text-[10px] font-bold mr-2">1</div>
+                <h2 className="text-xs font-bold tracking-wider uppercase text-neutral-900 dark:text-neutral-100">Imagen de Origen</h2>
+              </div>
+              
+              <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 ml-1 block">
+                Vista Previa
+              </label>
+              
+              <div>
+                <ImageUpload 
+                  fileData={fileData} 
+                  onFileSelect={handleFileSelect} 
+                  onClear={handleClearFile} 
+                />
+              </div>
+
+              {/* Extension Selector */}
+              {fileData && (
+                <div className="mt-4 animate-in fade-in slide-in-from-top-2">
+                   <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 ml-1 block">
+                    Extensión de Salida
+                  </label>
+                  <div className="flex items-center gap-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-3 rounded-none shadow-sm">
+                     <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full">
+                        <FileType size={16} className="text-neutral-500 dark:text-neutral-400" />
+                     </div>
+                     <div className="flex-grow flex items-center gap-1">
+                        <span className="text-neutral-400 dark:text-neutral-600 font-mono select-none">.</span>
+                        <input 
+                          type="text" 
+                          value={targetExtension}
+                          onChange={(e) => setTargetExtension(e.target.value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase())}
+                          className="w-full bg-transparent border-none focus:ring-0 text-sm font-bold font-mono text-neutral-900 dark:text-neutral-100 p-0 placeholder:text-neutral-300"
+                          placeholder="jpg"
+                        />
+                     </div>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 dark:text-neutral-600 mt-2 leading-tight">
+                    Modifica esto si deseas convertir la extensión (ej. png, webp).
+                  </p>
+                </div>
+              )}
+              
+              {!fileData && (
+                 <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-3 leading-relaxed">
+                   Esta imagen será procesada y duplicada en el archivo ZIP final.
+                 </p>
+              )}
             </div>
           </div>
 
           {/* Right Column: Names Input */}
-          <div className="md:col-span-7 flex flex-col h-full">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-grow flex flex-col">
-              <div className="mb-1">
-                  <h2 className="text-lg font-semibold text-slate-800">2. Target Filenames</h2>
-                  <p className="text-sm text-slate-500 mb-4">Enter the list of names for the new files (one per line).</p>
-              </div>
-              <div className="flex-grow min-h-[300px]">
-                 <NamesInput 
-                    value={namesInput} 
-                    onChange={setNamesInput} 
-                    onAutoGenerate={handleAutoGenerate}
-                    isGenerating={appState === AppState.GENERATING_NAMES}
-                    hasFile={!!fileData}
-                 />
-              </div>
+          <div className="lg:col-span-8 flex flex-col h-full">
+            <div className="flex-col">
+               <NamesInput 
+                  header={
+                    <div className="flex items-center h-full">
+                      <div className="w-5 h-5 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center text-[10px] font-bold mr-2">2</div>
+                      <h2 className="text-xs font-bold tracking-wider uppercase text-neutral-900 dark:text-neutral-100">Nuevos Nombres</h2>
+                    </div>
+                  }
+                  value={namesInput} 
+                  onChange={setNamesInput} 
+                  onAutoGenerate={handleAutoGenerate}
+                  isGenerating={appState === AppState.GENERATING_NAMES}
+                  hasFile={!!fileData}
+                  fileExtension={targetExtension} // Pass the controlled extension
+               />
             </div>
           </div>
         </div>
       </main>
 
-      {/* Bottom Sticky Action Bar */}
-      <div className="bg-white border-t border-slate-200 sticky bottom-0 z-20 pb-safe">
-        <div className="max-w-5xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="hidden sm:block">
-            <p className="text-sm font-medium text-slate-900">
-              {fileCount} {fileCount === 1 ? 'file' : 'files'} ready
-            </p>
-            <p className="text-xs text-slate-500">
-              Total estimated size: {fileData ? ((fileData.file.size * fileCount) / 1024 / 1024).toFixed(2) : '0.00'} MB
-            </p>
+      {/* Footer / Action Bar */}
+      <div className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 sticky bottom-0 z-20 transition-colors duration-300">
+        <div className="max-w-[1400px] mx-auto px-6 py-6 flex items-center justify-between">
+          <div className="hidden sm:flex flex-col">
+            <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+              {fileCount} {fileCount === 1 ? 'archivo' : 'archivos'} generados
+            </span>
+            <span className="text-xs text-neutral-400 dark:text-neutral-600">
+              {fileData ? ((fileData.file.size * fileCount) / 1024 / 1024).toFixed(2) : '0.00'} MB estimado
+            </span>
           </div>
           
           <button
             onClick={handleDownload}
             disabled={!canDownload}
             className={`
-              w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 rounded-xl font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all transform active:scale-95
-              ${canDownload 
-                ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-600/30' 
-                : 'bg-slate-300 cursor-not-allowed shadow-none'
+              relative w-full sm:w-auto min-w-[280px] overflow-hidden flex items-center justify-center gap-3 px-10 py-4 text-lg font-black tracking-wider transition-all duration-300 rounded-md shadow-xl
+              ${canDownload || appState === AppState.PROCESSING_ZIP
+                ? 'bg-green-600 hover:bg-green-500 text-white shadow-green-200/50 dark:shadow-green-900/20 transform hover:-translate-y-1' 
+                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed shadow-none'
               }
             `}
           >
-            {appState === AppState.PROCESSING_ZIP ? (
-               <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Zipping...
-               </>
-            ) : (
-               <>
-                <Download size={20} />
-                Download ZIP
-               </>
+            {/* Progress Bar Background (Darker shade for track) */}
+            {appState === AppState.PROCESSING_ZIP && (
+              <div className="absolute inset-0 bg-green-800" />
             )}
+            
+            {/* Progress Bar Fill (Lighter/Standard shade) */}
+            {appState === AppState.PROCESSING_ZIP && (
+              <div 
+                className="absolute left-0 top-0 bottom-0 bg-green-500 transition-all duration-200 ease-out" 
+                style={{ width: `${progress}%` }}
+              />
+            )}
+
+            {/* Content */}
+            <div className="relative z-10 flex items-center gap-2">
+              {appState === AppState.PROCESSING_ZIP ? (
+                 <>
+                  <Loader2 size={20} strokeWidth={3} className="animate-spin" />
+                  <span className="tabular-nums">COMPRIMIENDO... {progress}%</span>
+                 </>
+              ) : (
+                 <>
+                  <Download size={24} strokeWidth={3} />
+                  DESCARGAR ZIP
+                 </>
+              )}
+            </div>
           </button>
         </div>
       </div>

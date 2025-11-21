@@ -1,5 +1,5 @@
 {
-  "name": "Bulk Renamer & Zipper",
-  "description": "Upload an image, define a list of filenames, and instantly download a ZIP containing copies of your image with those names. Features AI-powered filename suggestions.",
+  "name": "Renombrador Masivo IMG",
+  "description": "Sube una imagen, define una lista de nombres y descarga instantáneamente un ZIP con copias de tu imagen. Incluye sugerencias de nombres con IA.",
   "requestFramePermissions": []
 }
