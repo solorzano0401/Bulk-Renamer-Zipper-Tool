@@ -1,0 +1,5 @@
+{
+  "name": "Bulk Renamer & Zipper",
+  "description": "Upload an image, define a list of filenames, and instantly download a ZIP containing copies of your image with those names. Features AI-powered filename suggestions.",
+  "requestFramePermissions": []
+}
