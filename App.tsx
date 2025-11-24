@@ -4,14 +4,30 @@ import { ImageUpload } from './components/ImageUpload';
 import { NamesInput } from './components/NamesInput';
 import { generateFilenamesFromImage } from './services/geminiService';
 import { generateAndDownloadZip } from './utils/zipUtils';
-import { Download, Check, Moon, Sun, Loader2, FileType, AlertCircle } from 'lucide-react';
+import { 
+  Download, 
+  Check, 
+  Moon, 
+  Sun, 
+  Loader2, 
+  FileType, 
+  AlertCircle,
+  Archive,
+  ImageIcon,
+  Scaling,
+  LayoutGrid
+} from 'lucide-react';
 
 const App: React.FC = () => {
+  // Navigation State
+  const [activeTab, setActiveTab] = useState<'renamer' | 'encoder' | 'resizer'>('renamer');
+
+  // Renamer Logic State
   const [fileData, setFileData] = useState<FileData | null>(null);
   const [namesInput, setNamesInput] = useState<string>('');
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [progress, setProgress] = useState(0);
   
@@ -57,7 +73,7 @@ const App: React.FC = () => {
       setTargetExtension(ext); // Set default extension based on uploaded file
       setExtensionError(null);
       setErrorMessage(null);
-      setSuccessMessage(null);
+      setDownloadSuccess(false);
     };
     reader.readAsDataURL(file);
   }, []);
@@ -66,7 +82,7 @@ const App: React.FC = () => {
     setFileData(null);
     setNamesInput('');
     setErrorMessage(null);
-    setSuccessMessage(null);
+    setDownloadSuccess(false);
     setTargetExtension('jpg');
     setExtensionError(null);
   }, []);
@@ -93,7 +109,7 @@ const App: React.FC = () => {
     
     setAppState(AppState.GENERATING_NAMES);
     setErrorMessage(null);
-    setSuccessMessage(null);
+    setDownloadSuccess(false);
     try {
       const suggestions = await generateFilenamesFromImage(fileData.file);
       if (suggestions.length > 0) {
@@ -115,7 +131,8 @@ const App: React.FC = () => {
     setAppState(AppState.PROCESSING_ZIP);
     setProgress(0);
     setErrorMessage(null);
-    setSuccessMessage(null);
+    setDownloadSuccess(false);
+
     try {
       const namesList = namesInput
         .split('\n')
@@ -134,8 +151,9 @@ const App: React.FC = () => {
         targetExtension, 
         (percent) => setProgress(Math.round(percent))
       );
-      setSuccessMessage("¡Descarga completada con éxito!");
-      setTimeout(() => setSuccessMessage(null), 5000);
+      
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
     } catch (error) {
       console.error(error);
       setErrorMessage("Ocurrió un error al crear el archivo ZIP.");
@@ -149,49 +167,20 @@ const App: React.FC = () => {
   const totalFileCount = rawFileCount;
   const canDownload = fileData !== null && rawFileCount > 0 && appState === AppState.IDLE && !extensionError;
 
-  return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col font-sans text-neutral-900 dark:text-neutral-100 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300">
-      
-      {/* Header */}
-      <header className="w-full px-6 py-6 border-b border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-950/50 backdrop-blur-sm sticky top-0 z-30">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-bold tracking-tight">
-              Renombrador<span className="text-neutral-400 dark:text-neutral-600">Zip</span>
-            </h1>
-            <div className="hidden sm:block h-4 w-[1px] bg-neutral-300 dark:bg-neutral-700 mx-2"></div>
-            <div className="hidden sm:block text-xs text-neutral-500 dark:text-neutral-500 uppercase tracking-wider font-medium">
-              Herramienta de Archivos
-            </div>
-          </div>
+  // --- RENDER HELPERS ---
 
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-full text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-200 dark:focus:ring-neutral-800"
-            aria-label="Toggle Dark Mode"
-          >
-            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-grow w-full max-w-[1400px] mx-auto px-6 py-8">
+  const renderRenamerContent = () => (
+    <div className="flex flex-col h-full">
+       <div className="flex-grow w-full max-w-[1600px] mx-auto px-4 md:px-6 py-6 md:py-8">
         
+        {/* Messages */}
         {errorMessage && (
-          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm border-l-2 border-red-500 rounded-r-sm">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm border-l-2 border-red-500 rounded-r-sm">
              {errorMessage}
           </div>
         )}
 
-        {successMessage && (
-          <div className="mb-8 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm border-l-2 border-emerald-500 flex items-center gap-2 animate-in fade-in slide-in-from-top-2 rounded-r-sm">
-             <Check size={18} />
-             {successMessage}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
           {/* Left Column: Upload */}
           <div className="lg:col-span-4 h-full">
             <div className="flex flex-col h-full">
@@ -245,43 +234,35 @@ const App: React.FC = () => {
                   </p>
                 </div>
               )}
-              
-              {!fileData && (
-                 <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-3 leading-relaxed">
-                   Esta imagen será procesada y duplicada en el archivo ZIP final.
-                 </p>
-              )}
             </div>
           </div>
 
-          {/* Right Column: Names Input & Settings */}
+          {/* Right Column: Names Input */}
           <div className="lg:col-span-8 flex flex-col h-full">
-            <div className="flex-col">
-               <NamesInput 
-                  header={
-                    <div className="flex items-center h-full">
-                      <div className="w-5 h-5 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center text-[10px] font-bold mr-2">2</div>
-                      <h2 className="text-xs font-bold tracking-wider uppercase text-neutral-900 dark:text-neutral-100">Nuevos Nombres</h2>
-                    </div>
-                  }
-                  value={namesInput} 
-                  onChange={setNamesInput} 
-                  onAutoGenerate={handleAutoGenerate}
-                  isGenerating={appState === AppState.GENERATING_NAMES}
-                  hasFile={!!fileData}
-                  fileExtension={!extensionError ? targetExtension : '...'} 
-               />
-            </div>
+             <NamesInput 
+                header={
+                  <div className="flex items-center h-full">
+                    <div className="w-5 h-5 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center text-[10px] font-bold mr-2">2</div>
+                    <h2 className="text-xs font-bold tracking-wider uppercase text-neutral-900 dark:text-neutral-100">Nuevos Nombres</h2>
+                  </div>
+                }
+                value={namesInput} 
+                onChange={setNamesInput} 
+                onAutoGenerate={handleAutoGenerate}
+                isGenerating={appState === AppState.GENERATING_NAMES}
+                hasFile={!!fileData}
+                fileExtension={!extensionError ? targetExtension : '...'} 
+             />
           </div>
         </div>
-      </main>
+      </div>
 
-      {/* Footer / Action Bar */}
-      <div className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 sticky bottom-0 z-20 transition-colors duration-300">
-        <div className="max-w-[1400px] mx-auto px-6 py-6 flex items-center justify-between">
+      {/* Sticky Footer */}
+      <div className="border-t border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md sticky bottom-0 z-20 transition-colors duration-300">
+        <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
           <div className="hidden sm:flex flex-col">
             <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-              {totalFileCount} {totalFileCount === 1 ? 'archivo' : 'archivos'}
+              {totalFileCount} {totalFileCount === 1 ? 'archivo' : 'archivos'} a generar
             </span>
             <span className="text-xs text-neutral-400 dark:text-neutral-600">
               {fileData ? ((fileData.file.size * totalFileCount) / 1024 / 1024).toFixed(2) : '0.00'} MB estimado
@@ -290,21 +271,23 @@ const App: React.FC = () => {
           
           <button
             onClick={handleDownload}
-            disabled={!canDownload}
+            disabled={!canDownload && !downloadSuccess}
             className={`
               relative w-full sm:w-auto min-w-[280px] overflow-hidden flex items-center justify-center gap-3 px-10 py-4 text-lg font-black tracking-wider transition-all duration-300 rounded-md shadow-xl
-              ${canDownload || appState === AppState.PROCESSING_ZIP
-                ? 'bg-green-600 hover:bg-green-500 text-white shadow-green-200/50 dark:shadow-green-900/20 transform hover:-translate-y-1' 
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed shadow-none'
+              ${downloadSuccess 
+                ? 'bg-emerald-500 text-white shadow-emerald-200/50 dark:shadow-emerald-900/20 transform scale-105 cursor-default'
+                : (canDownload || appState === AppState.PROCESSING_ZIP)
+                  ? 'bg-green-600 hover:bg-green-500 text-white shadow-green-200/50 dark:shadow-green-900/20 transform hover:-translate-y-1' 
+                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed shadow-none'
               }
             `}
           >
-            {/* Progress Bar Background (Darker shade for track) */}
+            {/* Progress Bar Background */}
             {appState === AppState.PROCESSING_ZIP && (
               <div className="absolute inset-0 bg-green-800" />
             )}
             
-            {/* Progress Bar Fill (Lighter/Standard shade) */}
+            {/* Progress Bar Fill */}
             {appState === AppState.PROCESSING_ZIP && (
               <div 
                 className="absolute left-0 top-0 bottom-0 bg-green-500 transition-all duration-200 ease-out" 
@@ -319,6 +302,11 @@ const App: React.FC = () => {
                   <Loader2 size={20} strokeWidth={3} className="animate-spin" />
                   <span className="tabular-nums">COMPRIMIENDO... {progress}%</span>
                  </>
+              ) : downloadSuccess ? (
+                 <div className="flex items-center gap-2 animate-in zoom-in duration-300">
+                   <Check size={28} strokeWidth={4} />
+                   <span>¡DESCARGADO!</span>
+                 </div>
               ) : (
                  <>
                   <Download size={24} strokeWidth={3} />
@@ -329,6 +317,94 @@ const App: React.FC = () => {
           </button>
         </div>
       </div>
+    </div>
+  );
+
+  const renderPlaceholder = (title: string, icon: any) => (
+    <div className="flex-grow flex flex-col items-center justify-center h-full text-neutral-300 dark:text-neutral-700 p-12">
+      <div className="p-6 bg-neutral-100 dark:bg-neutral-800 rounded-full mb-4">
+        {React.createElement(icon, { size: 48, strokeWidth: 1.5 })}
+      </div>
+      <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">{title}</h3>
+      <p className="max-w-md text-center text-neutral-500 dark:text-neutral-500">
+        Esta herramienta está en desarrollo. Pronto estará disponible.
+      </p>
+    </div>
+  );
+
+  const TabButton = ({ id, label, icon: Icon, mobileLabel }: { id: typeof activeTab, label: string, icon: any, mobileLabel?: string }) => (
+    <button
+      onClick={() => setActiveTab(id)}
+      className={`
+        flex items-center gap-2 px-3 md:px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200 relative z-10 whitespace-nowrap flex-1 md:flex-none justify-center
+        ${activeTab === id 
+          ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 shadow-sm ring-1 ring-black/5 dark:ring-white/5' 
+          : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-white/50 dark:hover:bg-neutral-800/50'
+        }
+      `}
+    >
+      <Icon size={16} strokeWidth={2} className={activeTab === id ? 'text-neutral-900 dark:text-neutral-100' : 'opacity-70'} />
+      <span className="hidden md:inline">{label}</span>
+      <span className="md:hidden">{mobileLabel || label}</span>
+    </button>
+  );
+
+  return (
+    <div className="flex flex-col h-screen overflow-hidden bg-neutral-50 dark:bg-neutral-950 font-sans text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
+      
+      {/* Header Navigation */}
+      <header className="flex-shrink-0 z-40 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 flex flex-col md:block transition-all duration-300">
+        <div className="h-16 flex items-center justify-between px-4 md:px-6 relative">
+          {/* Logo Area */}
+          <div className="flex items-center gap-3">
+             <div className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 p-1.5 rounded-lg shadow-sm">
+               <LayoutGrid size={20} strokeWidth={2.5} />
+             </div>
+             <div className="flex flex-col leading-none">
+               <span className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Tools<span className="text-neutral-400 dark:text-neutral-500">Kit</span></span>
+               <span className="text-[10px] font-medium text-neutral-400 dark:text-neutral-600">v1.0.0</span>
+             </div>
+          </div>
+
+          {/* Center Tabs (Desktop) */}
+          <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center p-1 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+             <TabButton id="renamer" label="Renombrador Zip" icon={Archive} />
+             <TabButton id="encoder" label="Codificador" icon={ImageIcon} />
+             <TabButton id="resizer" label="Img Resizer" icon={Scaling} />
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2.5 rounded-full text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors focus:outline-none border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
+              aria-label="Toggle Dark Mode"
+              title={darkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Tabs (Bottom Row) */}
+        <div className="md:hidden px-4 pb-3 w-full overflow-x-auto scrollbar-none">
+           <nav className="flex items-center p-1 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 min-w-full">
+              <TabButton id="renamer" label="Renombrador Zip" mobileLabel="Renombrador" icon={Archive} />
+              <TabButton id="encoder" label="Codificador" icon={ImageIcon} />
+              <TabButton id="resizer" label="Img Resizer" icon={Scaling} />
+           </nav>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 overflow-hidden relative flex flex-col">
+         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-neutral-800 scrollbar-track-transparent">
+            {activeTab === 'renamer' && renderRenamerContent()}
+            {activeTab === 'encoder' && renderPlaceholder('Codificador de Imágenes', ImageIcon)}
+            {activeTab === 'resizer' && renderPlaceholder('Img Resizer', Scaling)}
+         </div>
+      </main>
+
     </div>
   );
 };
