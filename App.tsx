@@ -4,7 +4,7 @@ import { ImageUpload } from './components/ImageUpload';
 import { NamesInput } from './components/NamesInput';
 import { generateFilenamesFromImage } from './services/geminiService';
 import { generateAndDownloadZip } from './utils/zipUtils';
-import { Download, Check, Moon, Sun, Loader2, FileType } from 'lucide-react';
+import { Download, Check, Moon, Sun, Loader2, FileType, AlertCircle } from 'lucide-react';
 
 const App: React.FC = () => {
   const [fileData, setFileData] = useState<FileData | null>(null);
@@ -14,7 +14,10 @@ const App: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [progress, setProgress] = useState(0);
+  
+  // Extension State
   const [targetExtension, setTargetExtension] = useState<string>('jpg');
+  const [extensionError, setExtensionError] = useState<string | null>(null);
 
   // Initialize Dark Mode from Local Storage or System Preference
   useEffect(() => {
@@ -52,6 +55,7 @@ const App: React.FC = () => {
         extension: ext,
       });
       setTargetExtension(ext); // Set default extension based on uploaded file
+      setExtensionError(null);
       setErrorMessage(null);
       setSuccessMessage(null);
     };
@@ -64,7 +68,25 @@ const App: React.FC = () => {
     setErrorMessage(null);
     setSuccessMessage(null);
     setTargetExtension('jpg');
+    setExtensionError(null);
   }, []);
+
+  const handleExtensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    
+    // Strict Validation
+    if (val.length === 0) {
+      setExtensionError("Requerido");
+    } else if (val.length > 5) {
+      setExtensionError("Máx 5 letras");
+    } else if (!/^[a-zA-Z0-9]+$/.test(val)) {
+      setExtensionError("Solo letras/nums");
+    } else {
+      setExtensionError(null);
+    }
+
+    setTargetExtension(val.toLowerCase());
+  };
 
   const handleAutoGenerate = async () => {
     if (!fileData) return;
@@ -88,7 +110,7 @@ const App: React.FC = () => {
   };
 
   const handleDownload = async () => {
-    if (!fileData || !namesInput.trim()) return;
+    if (!fileData || !namesInput.trim() || extensionError) return;
 
     setAppState(AppState.PROCESSING_ZIP);
     setProgress(0);
@@ -109,7 +131,7 @@ const App: React.FC = () => {
       await generateAndDownloadZip(
         fileData.file, 
         namesList, 
-        targetExtension, // Use the user-selected extension
+        targetExtension, 
         (percent) => setProgress(Math.round(percent))
       );
       setSuccessMessage("¡Descarga completada con éxito!");
@@ -123,8 +145,9 @@ const App: React.FC = () => {
     }
   };
 
-  const fileCount = namesInput.split('\n').filter(l => l.trim()).length;
-  const canDownload = fileData !== null && fileCount > 0 && appState === AppState.IDLE;
+  const rawFileCount = namesInput.split('\n').filter(l => l.trim()).length;
+  const totalFileCount = rawFileCount;
+  const canDownload = fileData !== null && rawFileCount > 0 && appState === AppState.IDLE && !extensionError;
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col font-sans text-neutral-900 dark:text-neutral-100 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300">
@@ -192,20 +215,27 @@ const App: React.FC = () => {
               {/* Extension Selector */}
               {fileData && (
                 <div className="mt-4 animate-in fade-in slide-in-from-top-2">
-                   <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 ml-1 block">
-                    Extensión de Salida
-                  </label>
-                  <div className="flex items-center gap-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-3 rounded-none shadow-sm">
-                     <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full">
-                        <FileType size={16} className="text-neutral-500 dark:text-neutral-400" />
+                   <div className="flex items-center justify-between mb-2 ml-1">
+                      <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500">
+                        Extensión de Salida
+                      </label>
+                      {extensionError && (
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-red-500">
+                           <AlertCircle size={10} /> {extensionError}
+                        </span>
+                      )}
+                   </div>
+                  <div className={`flex items-center gap-2 bg-white dark:bg-neutral-900 border p-3 rounded-none shadow-sm transition-colors ${extensionError ? 'border-red-500 dark:border-red-500' : 'border-neutral-200 dark:border-neutral-800'}`}>
+                     <div className={`p-2 rounded-full transition-colors ${extensionError ? 'bg-red-50 dark:bg-red-900/20' : 'bg-neutral-100 dark:bg-neutral-800'}`}>
+                        <FileType size={16} className={`${extensionError ? 'text-red-500' : 'text-neutral-500 dark:text-neutral-400'}`} />
                      </div>
                      <div className="flex-grow flex items-center gap-1">
                         <span className="text-neutral-400 dark:text-neutral-600 font-mono select-none">.</span>
                         <input 
                           type="text" 
                           value={targetExtension}
-                          onChange={(e) => setTargetExtension(e.target.value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase())}
-                          className="w-full bg-transparent border-none focus:ring-0 text-sm font-bold font-mono text-neutral-900 dark:text-neutral-100 p-0 placeholder:text-neutral-300"
+                          onChange={handleExtensionChange}
+                          className={`w-full bg-transparent border-none focus:ring-0 text-sm font-bold font-mono p-0 placeholder:text-neutral-300 ${extensionError ? 'text-red-600 dark:text-red-400' : 'text-neutral-900 dark:text-neutral-100'}`}
                           placeholder="jpg"
                         />
                      </div>
@@ -224,7 +254,7 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Names Input */}
+          {/* Right Column: Names Input & Settings */}
           <div className="lg:col-span-8 flex flex-col h-full">
             <div className="flex-col">
                <NamesInput 
@@ -239,7 +269,7 @@ const App: React.FC = () => {
                   onAutoGenerate={handleAutoGenerate}
                   isGenerating={appState === AppState.GENERATING_NAMES}
                   hasFile={!!fileData}
-                  fileExtension={targetExtension} // Pass the controlled extension
+                  fileExtension={!extensionError ? targetExtension : '...'} 
                />
             </div>
           </div>
@@ -250,11 +280,11 @@ const App: React.FC = () => {
       <div className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 sticky bottom-0 z-20 transition-colors duration-300">
         <div className="max-w-[1400px] mx-auto px-6 py-6 flex items-center justify-between">
           <div className="hidden sm:flex flex-col">
-            <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-              {fileCount} {fileCount === 1 ? 'archivo' : 'archivos'} generados
+            <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+              {totalFileCount} {totalFileCount === 1 ? 'archivo' : 'archivos'}
             </span>
             <span className="text-xs text-neutral-400 dark:text-neutral-600">
-              {fileData ? ((fileData.file.size * fileCount) / 1024 / 1024).toFixed(2) : '0.00'} MB estimado
+              {fileData ? ((fileData.file.size * totalFileCount) / 1024 / 1024).toFixed(2) : '0.00'} MB estimado
             </span>
           </div>
           

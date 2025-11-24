@@ -22,14 +22,14 @@ export const generateAndDownloadZip = async (
     if (!cleanName) return;
 
     let finalName = cleanName;
-    
-    // Handle duplicates by appending a counter
-    if (uniqueNames.has(cleanName)) {
-      const count = uniqueNames.get(cleanName)! + 1;
-      uniqueNames.set(cleanName, count);
-      finalName = `${cleanName}_${count}`;
+
+    // Handle accidental duplicates across the whole set by appending a counter if needed
+    if (uniqueNames.has(finalName)) {
+      const count = uniqueNames.get(finalName)! + 1;
+      uniqueNames.set(finalName, count);
+      finalName = `${finalName}_${count}`;
     } else {
-      uniqueNames.set(cleanName, 1);
+      uniqueNames.set(finalName, 1);
     }
 
     // Ensure extension is present
