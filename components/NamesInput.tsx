@@ -158,7 +158,7 @@ export const NamesInput: React.FC<NamesInputProps> = ({
   };
 
   return (
-    <div className="flex flex-col relative h-full">
+    <div className="flex flex-col relative h-full min-h-[400px]">
       <div className="flex items-center justify-between mb-4 min-h-[34px]">
         <div className="flex-shrink-0">
           {header}
@@ -210,7 +210,17 @@ export const NamesInput: React.FC<NamesInputProps> = ({
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isImporting}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium transition-all border border-neutral-200 dark:border-neutral-700 rounded-md text-neutral-700 dark:text-neutral-300 hover:border-blue-600 dark:hover:border-blue-500 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white bg-white dark:bg-neutral-900 disabled:opacity-50 disabled:cursor-wait whitespace-nowrap"
+            className={`
+              flex items-center gap-2 px-3 py-1.5 text-xs font-medium transition-all duration-200 border rounded-md whitespace-nowrap shadow-sm
+              border-neutral-200 dark:border-neutral-700 
+              bg-white dark:bg-neutral-900 
+              text-neutral-600 dark:text-neutral-400
+              hover:border-emerald-500 dark:hover:border-emerald-500
+              hover:bg-emerald-500 dark:hover:bg-emerald-500
+              hover:text-white dark:hover:text-white
+              hover:shadow-emerald-500/20
+              disabled:opacity-50 disabled:cursor-wait
+            `}
             title="Importar desde Excel o CSV (Primera columna)"
           >
             {isImporting ? (
@@ -230,7 +240,7 @@ export const NamesInput: React.FC<NamesInputProps> = ({
                 ? 'border-transparent text-neutral-300 dark:text-neutral-700 cursor-not-allowed' 
                 : isGenerating
                   ? 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 cursor-wait'
-                  : 'border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white bg-white dark:bg-neutral-900'
+                  : 'border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:border-black dark:hover:border-white hover:text-black dark:hover:text-white bg-white dark:bg-neutral-900 shadow-sm'
               }
             `}
           >
@@ -247,12 +257,12 @@ export const NamesInput: React.FC<NamesInputProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
         {/* Editor Area */}
-        <div className="relative flex flex-col">
+        <div className="relative flex flex-col h-full">
            <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 ml-1">Editor Manual</label>
            <textarea
-            className="w-full h-[500px] p-5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-neutral-400 dark:focus:border-neutral-600 focus:bg-white dark:focus:bg-neutral-950 transition-all duration-200 rounded-none text-sm text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-700 focus:outline-none resize-none font-mono leading-relaxed shadow-sm hover:border-neutral-300 dark:hover:border-neutral-700"
+            className="w-full h-full min-h-[300px] p-5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 focus:border-neutral-400 dark:focus:border-neutral-600 focus:bg-white dark:focus:bg-neutral-950 transition-all duration-200 rounded-none text-sm text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-700 focus:outline-none resize-none font-mono leading-relaxed shadow-sm hover:border-neutral-300 dark:hover:border-neutral-700"
             placeholder={`Escribe manualmente o importa...\n\nEjemplo:\nnombre-archivo-01\nnombre-archivo-02`}
             value={value}
             onChange={(e) => onChange(e.target.value)}
@@ -268,12 +278,12 @@ export const NamesInput: React.FC<NamesInputProps> = ({
         </div>
 
         {/* Preview Area */}
-        <div className="relative flex flex-col">
+        <div className="relative flex flex-col h-full">
            <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 ml-1 flex items-center gap-1">
              <Eye size={10} />
              Vista Previa Salida
            </label>
-           <div className="w-full h-[500px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-none overflow-hidden flex flex-col shadow-sm">
+           <div className="w-full h-full min-h-[300px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-none overflow-hidden flex flex-col shadow-sm">
              {previewList.length === 0 ? (
                <div className="flex-grow flex flex-col items-center justify-center text-neutral-300 dark:text-neutral-700 p-6 text-center bg-neutral-50/30 dark:bg-neutral-900/30">
                   <div className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-full mb-3">
