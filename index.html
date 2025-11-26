@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bulk Renamer & Zipper</title>
+    <title>GenesisIA Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -19,6 +19,21 @@
                 850: '#1f1f1f',
                 950: '#0a0a0a',
               }
+            },
+            animation: {
+              'gradient-x': 'gradient-x 15s ease infinite',
+            },
+            keyframes: {
+              'gradient-x': {
+                '0%, 100%': {
+                  'background-size': '200% 200%',
+                  'background-position': 'left center'
+                },
+                '50%': {
+                  'background-size': '200% 200%',
+                  'background-position': 'right center'
+                },
+              },
             }
           }
         }
@@ -51,6 +66,80 @@
       }
       .dark ::-webkit-scrollbar-thumb:hover {
         background: #525252; 
+      }
+
+      /* Animation Polyfills for components using tailwindcss-animate classes */
+      .animate-in {
+        animation-duration: 0.5s;
+        animation-fill-mode: both;
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .fade-in {
+        animation-name: fadeIn;
+      }
+      .zoom-in {
+        animation-name: zoomIn;
+      }
+      .zoom-in-95 {
+        animation-name: zoomIn95;
+      }
+      .slide-in-from-top-2 {
+        animation-name: slideInFromTop2;
+      }
+      .slide-in-from-top-4 {
+        animation-name: slideInFromTop4;
+      }
+      .slide-in-from-bottom-2 {
+        animation-name: slideInFromBottom2;
+      }
+      .slide-in-from-bottom-4 {
+        animation-name: slideInFromBottom4;
+      }
+      .slide-in-from-right-2 {
+        animation-name: slideInFromRight2;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes zoomIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      @keyframes zoomIn95 {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      @keyframes slideInFromTop2 {
+        from { transform: translateY(-0.5rem); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes slideInFromTop4 {
+        from { transform: translateY(-1rem); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes slideInFromBottom2 {
+        from { transform: translateY(0.5rem); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes slideInFromBottom4 {
+        from { transform: translateY(1rem); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes slideInFromRight2 {
+        from { transform: translateX(0.5rem); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes gradient-x {
+        0%, 100% {
+          background-size: 200% 200%;
+          background-position: left center;
+        }
+        50% {
+          background-size: 200% 200%;
+          background-position: right center;
+        }
       }
     </style>
   <script type="importmap">
