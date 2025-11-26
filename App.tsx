@@ -293,19 +293,19 @@ const App: React.FC = () => {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 pb-6">
         {/* Left Column: Upload */}
         <div className="lg:col-span-4 flex flex-col h-full min-h-[400px]">
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-indigo-500 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-indigo-500 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 group">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
-                <ImageIcon size={18} />
+              <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-neutral-600 dark:text-neutral-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">
+                <ImageIcon size={18} className="group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] transition-all" />
               </div>
-              <h3 className="font-bold text-neutral-900 dark:text-white">Imagen de Origen</h3>
+              <h3 className="font-bold text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] transition-all">Imagen de Origen</h3>
             </div>
             
             <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 block">
               Vista Previa
             </label>
             
-            <div className="flex-1 min-h-[200px] relative">
+            <div className="flex-1 min-h-[calc(100vh-25rem)] lg:min-h-[200px] relative">
               <div className="absolute inset-0">
                 <ImageUpload 
                   fileData={fileData} 
@@ -350,17 +350,17 @@ const App: React.FC = () => {
 
         {/* Right Column: Names Input */}
         <div className="lg:col-span-8 flex flex-col h-full min-h-[500px]">
-           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-indigo-500 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10">
+           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-indigo-500 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 group">
              
              {/* Names Input Component */}
              <div className="flex-1 min-h-[300px] flex flex-col">
                 <NamesInput 
                     header={
                       <div className="flex items-center gap-2">
-                        <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
-                          <FileText size={18} />
+                        <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-neutral-600 dark:text-neutral-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">
+                          <FileText size={18} className="group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] transition-all" />
                         </div>
-                        <h3 className="font-bold text-neutral-900 dark:text-white">Nuevos Nombres</h3>
+                        <h3 className="font-bold text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] transition-all">Nuevos Nombres</h3>
                       </div>
                     }
                     value={namesInput} 
@@ -460,18 +460,18 @@ const App: React.FC = () => {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 pb-6">
         {/* Left: Upload */}
         <div className="flex flex-col h-full min-h-[400px]">
-           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-pink-500 transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/10">
+           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-pink-500 transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/10 group">
              <div className="flex-none flex items-center gap-2 mb-4">
-                <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg text-pink-600 dark:text-pink-400">
-                   <Images size={18} />
+                <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-neutral-600 dark:text-neutral-400 group-hover:bg-pink-100 dark:group-hover:bg-pink-900/30 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors duration-300">
+                   <Images size={18} className="group-hover:drop-shadow-[0_0_8px_rgba(236,72,153,0.5)] transition-all" />
                 </div>
-                <h3 className="font-bold text-neutral-900 dark:text-white">Imágenes ({resizerFiles.length}/25)</h3>
+                <h3 className="font-bold text-neutral-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 group-hover:drop-shadow-[0_0_8px_rgba(236,72,153,0.5)] transition-all">Imágenes ({resizerFiles.length}/25)</h3>
              </div>
              
              <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 block">
                Entrada por lotes
              </label>
-             <div className="flex-1 min-h-[300px] relative">
+             <div className="flex-1 min-h-[calc(100vh-25rem)] lg:min-h-[300px] relative">
                <div className="absolute inset-0">
                 <ImageUpload
                   files={resizerFiles}
@@ -488,13 +488,13 @@ const App: React.FC = () => {
         
         {/* Right: Controls */}
         <div className="flex flex-col h-full min-h-[500px]">
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-pink-500 transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/10">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm flex flex-col h-full hover:border-pink-500 transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/10 group">
             {/* Header managed internally if needed or external for alignment */}
             <div className="flex-none flex items-center gap-2 mb-4">
-               <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg text-pink-600 dark:text-pink-400">
-                  <Settings2 size={18} />
+               <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-neutral-600 dark:text-neutral-400 group-hover:bg-pink-100 dark:group-hover:bg-pink-900/30 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors duration-300">
+                  <Settings2 size={18} className="group-hover:drop-shadow-[0_0_8px_rgba(236,72,153,0.5)] transition-all" />
                </div>
-               <h3 className="font-bold text-neutral-900 dark:text-white">Configuración</h3>
+               <h3 className="font-bold text-neutral-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 group-hover:drop-shadow-[0_0_8px_rgba(236,72,153,0.5)] transition-all">Configuración</h3>
             </div>
             
             <label className="text-[10px] uppercase font-semibold text-neutral-400 dark:text-neutral-500 mb-2 block">
@@ -607,17 +607,17 @@ const App: React.FC = () => {
             <div className="h-16 flex items-center justify-between px-4 md:px-6">
               
               {/* Left: Logo & Dropdown Trigger */}
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 md:gap-6">
                  {/* Logo (Home) */}
                  <div 
                   onClick={goHome}
-                  className="flex items-center gap-3 cursor-pointer group"
+                  className="flex items-center gap-2 md:gap-3 cursor-pointer group"
                  >
-                   <div className="bg-gradient-to-br from-indigo-600 to-violet-600 dark:from-indigo-500 dark:to-violet-500 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-                     <Wand size={26} strokeWidth={2.5} />
+                   <div className="bg-gradient-to-br from-indigo-600 to-violet-600 dark:from-indigo-500 dark:to-violet-500 text-white p-2 md:p-2.5 rounded-lg md:rounded-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                     <Wand className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
                    </div>
                    <div className="flex flex-col leading-tight">
-                     <span className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                     <span className="text-base md:text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
                        Genesis<span className="text-indigo-600 dark:text-indigo-400">IA</span>
                      </span>
                      <span className="text-[10px] font-medium text-neutral-400 dark:text-neutral-500 tracking-wider hidden sm:inline-block">
@@ -627,14 +627,14 @@ const App: React.FC = () => {
                  </div>
 
                  {/* Divider */}
-                 <div className="h-8 w-px bg-neutral-200 dark:bg-neutral-800 hidden sm:block"></div>
+                 <div className="h-6 md:h-8 w-px bg-neutral-200 dark:bg-neutral-800 hidden sm:block"></div>
 
                  {/* Tool Selector Dropdown Trigger */}
                  <div className="relative">
                     <button
                       onClick={() => setIsMenuOpen(!isMenuOpen)}
                       className={`
-                        flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full border transition-all duration-200
+                        flex items-center gap-1.5 md:gap-2 px-2.5 py-1.5 md:px-4 md:py-2 rounded-full border transition-all duration-200
                         ${isMenuOpen 
                           ? 'bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 text-neutral-900 dark:text-white'
                           : 'bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900'
@@ -650,7 +650,7 @@ const App: React.FC = () => {
                     {isMenuOpen && (
                       <>
                         <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setIsMenuOpen(false)}></div>
-                        <div className="absolute top-full left-0 mt-3 w-[300px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="absolute top-full left-0 mt-3 w-[260px] md:w-[300px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                            <div className="text-[10px] font-bold uppercase text-neutral-400 px-3 py-2">Seleccionar Módulo</div>
                            <div className="space-y-1">
                               <MenuOption 
@@ -685,21 +685,21 @@ const App: React.FC = () => {
               </div>
 
               {/* Right Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 md:gap-2">
                 <button
                   onClick={goHome}
-                  className="p-3 rounded-full text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors focus:outline-none border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
+                  className="p-2 md:p-3 rounded-full text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors focus:outline-none border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
                   title="Volver al Inicio"
                 >
-                  <Home size={18} />
+                  <Home className="w-4 h-4 md:w-[18px] md:h-[18px]" />
                 </button>
                 <button
                   onClick={toggleDarkMode}
-                  className="p-3 rounded-full text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors focus:outline-none border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
+                  className="p-2 md:p-3 rounded-full text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors focus:outline-none border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
                   aria-label="Toggle Dark Mode"
                   title={darkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
                 >
-                  {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                  {darkMode ? <Sun className="w-4 h-4 md:w-[18px] md:h-[18px]" /> : <Moon className="w-4 h-4 md:w-[18px] md:h-[18px]" />}
                 </button>
               </div>
             </div>

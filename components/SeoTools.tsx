@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Tag, Key, Lightbulb, ArrowRight, Loader2, Copy, Image as ImageIcon, X, List, Hash, Layers, RotateCcw, FileText, Heading } from 'lucide-react';
+import { Search, Tag, Key, Lightbulb, ArrowRight, Loader2, Copy, Image as ImageIcon, X, List, Hash, Layers, RotateCcw, FileText, Heading, RefreshCw } from 'lucide-react';
 import { generateSeoKeywords, SeoResult } from '../services/geminiService';
 
 export const SeoTools: React.FC = () => {
@@ -34,7 +34,7 @@ export const SeoTools: React.FC = () => {
     setError(null);
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (isRegenerate = false) => {
     if (!inputText.trim() && !selectedImage) {
       setError("Por favor ingresa un texto o sube una imagen.");
       return;
@@ -42,7 +42,11 @@ export const SeoTools: React.FC = () => {
 
     setIsGenerating(true);
     setError(null);
-    setSeoData(null);
+    
+    // Only clear data if it is NOT a regeneration to avoid visual jumps
+    if (!isRegenerate) {
+        setSeoData(null);
+    }
 
     try {
       const results = await generateSeoKeywords(inputText, selectedImage || undefined);
@@ -97,10 +101,10 @@ ${seoData.attributes.join(', ')}
             {/* Feature 1: Alt Text */}
             <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 relative overflow-hidden group hover:border-orange-500 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer">
               <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-lg w-fit mb-4 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors duration-300">
-                <Tag size={24} className="text-neutral-600 dark:text-neutral-400 group-hover:text-orange-600 dark:group-hover:text-orange-400" />
+                <Tag size={24} className="text-neutral-600 dark:text-neutral-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.5)] transition-all" />
               </div>
-              <h3 className="font-bold text-lg mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">Generador de Alt Text</h3>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
+              <h3 className="font-bold text-lg mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.5)] transition-all">Generador de Alt Text</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors">
                 Genera descripciones alternativas (Alt Text) optimizadas para SEO automáticamente usando IA.
               </p>
               <div className="mt-4 inline-flex items-center text-xs font-bold text-orange-600 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded">
@@ -114,10 +118,10 @@ ${seoData.attributes.join(', ')}
               className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 relative overflow-hidden group hover:border-orange-500 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer"
             >
               <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-lg w-fit mb-4 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors duration-300">
-                <Lightbulb size={24} className="text-neutral-600 dark:text-neutral-400 group-hover:text-orange-600 dark:group-hover:text-orange-400" />
+                <Lightbulb size={24} className="text-neutral-600 dark:text-neutral-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.5)] transition-all" />
               </div>
-              <h3 className="font-bold text-lg mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">Generador de Keywords</h3>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
+              <h3 className="font-bold text-lg mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.5)] transition-all">Generador de Keywords</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors">
                 Genera palabras clave estratégicas para productos web mediante análisis lógico profundo. Resultados "SEO-friendly" limpios de ruido social.
               </p>
               <div className="mt-4 inline-flex items-center text-xs font-bold text-orange-600 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded">
@@ -132,9 +136,9 @@ ${seoData.attributes.join(', ')}
              
              {/* Left Column: Input */}
              <div className="lg:col-span-4 space-y-6">
-                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm sticky top-6">
+                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm sticky top-6 hover:border-orange-500 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 group">
                    <div className="flex justify-between items-center mb-4">
-                     <h3 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                     <h3 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.5)] transition-all">
                        <Lightbulb size={18} className="text-orange-500" /> Contexto
                      </h3>
                      <button 
@@ -152,7 +156,7 @@ ${seoData.attributes.join(', ')}
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
                         placeholder="Ej: Zapatillas de running ligeras..."
-                        className="w-full h-32 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-sm focus:border-orange-500 outline-none resize-none"
+                        className="w-full h-32 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-sm focus:border-orange-500 outline-none resize-none transition-colors"
                       />
                    </div>
 
@@ -161,9 +165,9 @@ ${seoData.attributes.join(', ')}
                       <label className="text-xs font-bold uppercase text-neutral-400 mb-2 block">Referencia Visual (Opcional)</label>
                       
                       {!previewUrl ? (
-                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
-                          <ImageIcon className="text-neutral-300 mb-2" />
-                          <span className="text-xs text-neutral-500">Subir imagen</span>
+                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors group">
+                          <ImageIcon className="text-neutral-300 mb-2 group-hover:text-orange-500 transition-colors" />
+                          <span className="text-xs text-neutral-500 group-hover:text-orange-500 transition-colors">Subir imagen</span>
                           <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                         </label>
                       ) : (
@@ -180,15 +184,15 @@ ${seoData.attributes.join(', ')}
                    </div>
 
                    <button
-                     onClick={handleGenerate}
+                     onClick={() => handleGenerate(false)}
                      disabled={isGenerating || (!inputText && !selectedImage)}
                      className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${
                         isGenerating || (!inputText && !selectedImage)
                           ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed'
-                          : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20'
+                          : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 active:scale-95'
                      }`}
                    >
-                     {isGenerating ? (
+                     {isGenerating && !seoData ? (
                        <> <Loader2 className="animate-spin" /> Analizando... </>
                      ) : (
                        <> <Search size={18} /> Generar </>
@@ -196,33 +200,56 @@ ${seoData.attributes.join(', ')}
                    </button>
                    
                    {error && (
-                     <p className="text-xs text-red-500 mt-3 text-center">{error}</p>
+                     <p className="text-xs text-red-500 mt-3 text-center animate-in fade-in">{error}</p>
                    )}
                 </div>
              </div>
 
              {/* Right Column: Results */}
              <div className="lg:col-span-8">
-                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm min-h-full flex flex-col">
+                <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 shadow-sm min-h-full flex flex-col hover:border-orange-500 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 relative group">
+                   
+                   {/* Overlay while regenerating */}
+                   {isGenerating && seoData && (
+                     <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-sm z-20 flex items-center justify-center rounded-xl animate-in fade-in">
+                        <div className="bg-white dark:bg-neutral-800 px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 border border-neutral-200 dark:border-neutral-700">
+                           <Loader2 className="animate-spin text-orange-500" size={24} />
+                           <span className="font-bold text-neutral-800 dark:text-white">Generando nuevas ideas...</span>
+                        </div>
+                     </div>
+                   )}
+
                    <div className="flex justify-between items-center mb-6">
-                     <h3 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                     <h3 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.5)] transition-all">
                        <Layers size={20} className="text-orange-500" /> Recomendaciones SEO
                      </h3>
                      <div className="flex gap-2">
                         {seoData && (
                             <>
                             <button 
+                              onClick={() => handleGenerate(true)}
+                              disabled={isGenerating}
+                              className="text-xs flex items-center gap-1.5 text-white bg-orange-500 px-3 py-1.5 rounded-full hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-500/30 transition-all font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Obtener nuevas sugerencias"
+                            >
+                              <RefreshCw size={12} className={isGenerating ? "animate-spin" : ""} /> 
+                              <span className="hidden sm:inline">Regenerar</span>
+                            </button>
+
+                            <button 
+                              onClick={copyToClipboard}
+                              className="text-xs flex items-center gap-1.5 text-orange-600 bg-orange-50 dark:bg-orange-900/20 px-3 py-1.5 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors font-bold"
+                              title="Copiar texto formateado"
+                            >
+                              <Copy size={12} /> <span className="hidden sm:inline">Copiar</span>
+                            </button>
+
+                            <button 
                               onClick={handleRestart}
                               className="text-xs flex items-center gap-1.5 text-neutral-600 bg-neutral-100 dark:bg-neutral-800 px-3 py-1.5 rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors font-bold"
                               title="Reiniciar análisis"
                             >
-                              <RotateCcw size={12} /> <span className="hidden sm:inline">Reiniciar</span>
-                            </button>
-                            <button 
-                              onClick={copyToClipboard}
-                              className="text-xs flex items-center gap-1.5 text-orange-600 bg-orange-50 dark:bg-orange-900/20 px-3 py-1.5 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors font-bold"
-                            >
-                              <Copy size={12} /> Copiar Todo
+                              <RotateCcw size={12} />
                             </button>
                             </>
                         )}
@@ -246,7 +273,7 @@ ${seoData.attributes.join(', ')}
                           </h4>
                           <div className="space-y-2">
                              {seoData.seoTitles.map((title, i) => (
-                               <div key={i} className="flex items-center gap-3 p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm">
+                               <div key={i} className="flex items-center gap-3 p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm hover:border-orange-200 dark:hover:border-orange-900/50 transition-colors">
                                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-xs font-bold">
                                    {i + 1}
                                  </span>
@@ -278,7 +305,7 @@ ${seoData.attributes.join(', ')}
                           </h4>
                           <div className="flex flex-wrap gap-2">
                              {seoData.primary.map((k, i) => (
-                               <span key={i} className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-md text-base font-bold border border-blue-100 dark:border-blue-900/40">
+                               <span key={i} className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-md text-base font-bold border border-blue-100 dark:border-blue-900/40 hover:scale-105 transition-transform cursor-default">
                                  {k}
                                </span>
                              ))}

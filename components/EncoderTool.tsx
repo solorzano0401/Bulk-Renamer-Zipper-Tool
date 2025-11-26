@@ -370,7 +370,7 @@ export const EncoderTool: React.FC<EncoderToolProps> = () => {
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 relative overflow-hidden group hover:border-violet-500 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/10 flex flex-col h-72">
           
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 transition-colors duration-300">
+            <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300">
               <FileSpreadsheet size={20} className="text-neutral-600 dark:text-neutral-400 group-hover:text-violet-600 dark:group-hover:text-violet-400" />
             </div>
             <div>
@@ -424,7 +424,7 @@ export const EncoderTool: React.FC<EncoderToolProps> = () => {
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 relative overflow-hidden group hover:border-violet-500 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/10 flex flex-col h-72">
           
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 transition-colors duration-300">
+            <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300">
               <Images size={20} className="text-neutral-600 dark:text-neutral-400 group-hover:text-violet-600 dark:group-hover:text-violet-400" />
             </div>
             <div>
@@ -482,10 +482,10 @@ export const EncoderTool: React.FC<EncoderToolProps> = () => {
       {/* --- ACTIONS SECTION --- */}
       <div className="flex-none bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-sm mb-6 flex flex-col md:flex-row items-center justify-between gap-4 group hover:border-violet-500 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/10">
           <div className="flex items-center gap-2 w-full md:w-auto">
-            <span className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-neutral-500">
+            <span className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg text-neutral-600 dark:text-neutral-400 group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300">
               <List size={20} />
             </span>
-            <span className="text-sm font-bold text-neutral-700 dark:text-neutral-300">
+            <span className="text-sm font-bold text-neutral-700 dark:text-neutral-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
               Gestión de Lista
             </span>
             {(items.length > 0 || excelData.length > 0) && (

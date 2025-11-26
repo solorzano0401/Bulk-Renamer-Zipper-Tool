@@ -70,10 +70,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, darkMode }
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Archive size={120} />
               </div>
-              <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                 <Archive size={24} />
               </div>
-              <h3 className="text-2xl font-bold mb-3">Renombrador</h3>
+              <h3 className="text-2xl font-bold mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Renombrador</h3>
               <p className="text-neutral-500 dark:text-neutral-400 mb-6 leading-relaxed text-sm">
                 Renombra miles de archivos al instante usando sugerencias de IA o patrones personalizados. Incluye compresión ZIP.
               </p>
@@ -90,10 +90,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, darkMode }
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <FileCode size={120} />
               </div>
-              <div className="w-12 h-12 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 group-hover:bg-violet-100 dark:group-hover:bg-violet-900/50 group-hover:text-violet-600 dark:group-hover:text-violet-400">
                 <FileCode size={24} />
               </div>
-              <h3 className="text-2xl font-bold mb-3">Codificador</h3>
+              <h3 className="text-2xl font-bold mb-3 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">Codificador</h3>
               <p className="text-neutral-500 dark:text-neutral-400 mb-6 leading-relaxed text-sm">
                 Vincula imágenes con bases de datos Excel, valida SKUs y renombra archivos basado en lógica compleja.
               </p>
@@ -110,10 +110,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, darkMode }
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Scaling size={120} />
               </div>
-              <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900/50 text-pink-600 dark:text-pink-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 group-hover:bg-pink-100 dark:group-hover:bg-pink-900/50 group-hover:text-pink-600 dark:group-hover:text-pink-400">
                 <Scaling size={24} />
               </div>
-              <h3 className="text-2xl font-bold mb-3">Resizer</h3>
+              <h3 className="text-2xl font-bold mb-3 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">Resizer</h3>
               <p className="text-neutral-500 dark:text-neutral-400 mb-6 leading-relaxed text-sm">
                 Redimensionado por lotes, conversión de formato (WEBP/PNG/JPG) y optimización con presets.
               </p>
@@ -130,10 +130,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, darkMode }
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Search size={120} />
               </div>
-              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/50 group-hover:text-orange-600 dark:group-hover:text-orange-400">
                 <Search size={24} />
               </div>
-              <h3 className="text-2xl font-bold mb-3">SEO Tools</h3>
+              <h3 className="text-2xl font-bold mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">SEO Tools</h3>
               <p className="text-neutral-500 dark:text-neutral-400 mb-6 leading-relaxed text-sm">
                 Herramientas para optimización de contenido web, análisis de keywords y generador de Alt Text.
               </p>
